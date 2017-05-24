@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "defs.h"
-
+#include <string.h>
 /*
  * Please fill in the following team struct
  */
@@ -59,6 +59,31 @@ void rotate(int dim, pixel *src, pixel *dst)
 
 }
 
+char rotate_by_row_descr[] = "rotateByRow: Using whole row move.";
+void rotateByRow(int dim, pixel *src, pixel *dst)
+{
+  int i, j, c;
+  pixel row[dim];
+
+  for (i = 0; i < dim; i++){
+
+    c = 0;
+   for (j = 0; j < dim; j++){
+    row[j] = src[c + i];
+    c += dim;
+    }
+
+    int dstRow = (dim - i - 1) * (dim);
+    memcpy(dst + dstRow, row, dim * sizeof(pixel));
+
+  }
+
+}
+
+
+
+
+
 /*********************************************************************
  * register_rotate_functions - Register all of your different versions
  *     of the rotate kernel with the driver by calling the
@@ -69,6 +94,7 @@ void rotate(int dim, pixel *src, pixel *dst)
 
 void register_rotate_functions()
 {
+    add_rotate_function(&rotateByRow, rotate_by_row_descr);
     add_rotate_function(&naive_rotate, naive_rotate_descr);
     add_rotate_function(&rotate, rotate_descr);
     /* ... Register additional test functions here */
