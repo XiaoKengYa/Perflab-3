@@ -53,6 +53,7 @@ void rotate(int dim, pixel *src, pixel *dst)
   for (i = 0; i < dim; i++)
    for (j = 0; j < dim; j++)
     dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
+
     //Move whole row to column using 1 for loop.
     //Add loop unroll
 
@@ -141,7 +142,7 @@ static pixel avg(int dim, int i, int j, pixel *src)
 
     initialize_pixel_sum(&sum);
     for(ii = max(i-1, 0); ii <= min(i+1, dim-1); ii++)
-	for(jj = max(j-1, 0); jj <= min(j+1, dim-1); jj++)
+	   for(jj = max(j-1, 0); jj <= min(j+1, dim-1); jj++)
 	    accumulate_sum(&sum, src[RIDX(ii, jj, dim)]);
 
     assign_sum_to_pixel(&current_pixel, sum);
@@ -172,11 +173,20 @@ void naive_smooth(int dim, pixel *src, pixel *dst)
 char smooth_descr[] = "smooth: Current working version";
 void smooth(int dim, pixel *src, pixel *dst)
 {
-    naive_smooth(dim, src, dst);
+    int i, iterator;
+
+    pixel tempVar;
+    pixel[] tempAverages = new pixel[(dim)*2];
+
+    tempVar = horizAvg(dim, )
+
+    for(i = 1; i < dim; i++) {
+
+    }
     //store averages of left right pixels in temp variable
     //store averages of veritcal pixels in temp array
 
-    //new comment
+    //
 }
 
 
@@ -192,4 +202,18 @@ void register_smooth_functions() {
     add_smooth_function(&smooth, smooth_descr);
     add_smooth_function(&naive_smooth, naive_smooth_descr);
     /* ... Register additional test functions here */
+}
+
+public static pixel horizAvg(int dim, int i, int j, pixel *src) {
+
+  pixel n;
+
+  n.red = src[RIDX(i, j, dim)].red + src[RIDX(i+1, j , dim)].red
+  n.green = src[RIDX(i, j, dim)].green + src[RIDX(i+1, j , dim)].green
+  n.blue = src[RIDX(i, j, dim)].blue + src[RIDX(i+1, j , dim)].blue
+  n.red = n.red/2;
+  n.green = n.green/2;
+  n.blue = n.blue/2;
+
+  return n;
 }
