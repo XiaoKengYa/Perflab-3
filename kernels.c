@@ -161,7 +161,7 @@ void naive_smooth(int dim, pixel *src, pixel *dst)
     int i, j;
 
     for (i = 0; i < dim; i++)
-	for (j = 0; j < dim; j++)
+	   for (j = 0; j < dim; j++)
 	    dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
 }
 
@@ -175,6 +175,8 @@ void smooth(int dim, pixel *src, pixel *dst)
     naive_smooth(dim, src, dst);
     //store averages of left right pixels in temp variable
     //store averages of veritcal pixels in temp array
+
+    //new comment
 }
 
 
