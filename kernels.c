@@ -68,18 +68,55 @@ void rotateByRow(int dim, pixel *src, pixel *dst)
   for (i = 0; i < dim; i++){
 
     c = 0;
-   for (j = 0; j < dim; j++){
+    for (j = 0; j < (dim); j++){
     row[j] = src[c + i];
     c += dim;
     }
-
     int dstRow = (dim - i - 1) * (dim);
     memcpy(dst + dstRow, row, dim * sizeof(pixel));
-
   }
-
 }
 
+
+
+
+char rotate_by_row_descr_Three[] = "rotateByRow: Using whole row move. Three";
+void rotateByRowThree(int dim, pixel *src, pixel *dst)
+{
+  int i, j, c, dstRow;
+
+  for (i = 0; i < dim ; i+=1){
+
+    dstRow = (dim - i - 1) * (dim);
+    for (c = 0, j = 0; j < dim; j++){
+      dst[dstRow + j] =  src[c + i];
+      c += dim;
+    }
+  }
+}
+
+
+
+char rotate_by_row_Four_descr[] = "rotateByRow: Using whole row move. Four";
+void rotateByRowFour(int dim, pixel *src, pixel *dst)
+{
+  int i, j, c, total;
+
+  total = dim * dim;
+  c = dim;
+  j = 0;
+  for (i = 0; i < total; i++){
+
+    dst[j * dim + c] = src[total - i];
+    if(j == dim){
+      j = 0;
+      c--;
+    }else{
+      j++;
+    }
+
+  }
+}
 
 
 
@@ -94,6 +131,9 @@ void rotateByRow(int dim, pixel *src, pixel *dst)
 
 void register_rotate_functions()
 {
+  add_rotate_function(&rotateByRowThreeB, rotate_by_row_descr_ThreeB);
+    add_rotate_function(&rotateByRowThree, rotate_by_row_descr_Three);
+  //  add_rotate_function(&rotateByRowFour, rotate_by_row_Four_descr);
     add_rotate_function(&rotateByRow, rotate_by_row_descr);
     add_rotate_function(&naive_rotate, naive_rotate_descr);
     add_rotate_function(&rotate, rotate_descr);
