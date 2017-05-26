@@ -53,6 +53,7 @@ void rotate(int dim, pixel *src, pixel *dst)
   for (i = 0; i < dim; i++)
    for (j = 0; j < dim; j++)
     dst[RIDX(dim-1-j, i, dim)] = src[RIDX(i, j, dim)];
+
     //Move whole row to column using 1 for loop.
     //Add loop unroll
 
@@ -273,11 +274,83 @@ static pixel avg(int dim, int i, int j, pixel *src)
 
     initialize_pixel_sum(&sum);
     for(ii = max(i-1, 0); ii <= min(i+1, dim-1); ii++)
-	for(jj = max(j-1, 0); jj <= min(j+1, dim-1); jj++)
+	   for(jj = max(j-1, 0); jj <= min(j+1, dim-1); jj++)
 	    accumulate_sum(&sum, src[RIDX(ii, jj, dim)]);
 
     assign_sum_to_pixel(&current_pixel, sum);
     return current_pixel;
+}
+
+//START OF CUSTOM FUNCTIONS
+
+static pixel zero(pixel n) {
+
+  n.red = 0;
+  n.green = 0;
+  n.blue = 0;
+
+  return n;
+}
+
+static pixel divBy(pixel p, int i) {
+  pixel n;
+
+  n.red = p.red / i;
+  n.green = p.green / i;
+  n.blue = p.blue / i;
+
+  return n;
+}
+
+static pixel sum(pixel a, pixel b) {
+  pixel n;
+
+  n.red = a.red + b.red;
+  n.green = a.green + b.green;
+  n.blue = a.blue + b.blue;
+
+  return n;
+}
+
+static pixel vertSum(int dim, int i, int j, pixel *src) {
+  pixel n;
+
+  n.red = src[RIDX(i, j, dim)].red + src[RIDX(i+1, j , dim)].red;
+  n.green = src[RIDX(i, j, dim)].green + src[RIDX(i+1, j , dim)].green;
+  n.blue = src[RIDX(i, j, dim)].blue + src[RIDX(i+1, j , dim)].blue;
+
+  return n;
+}
+
+static pixel lDiagSum(int dim, int i, int j, pixel *src) {
+  pixel n;
+
+  n.red = src[RIDX(i, j, dim)].red + src[RIDX(i+1, j-1, dim)].red;
+  n.green = src[RIDX(i, j, dim)].green + src[RIDX(i+1, j-1, dim)].green;
+  n.blue = src[RIDX(i, j, dim)].blue + src[RIDX(i+1, j-1, dim)].blue;
+
+  return n;
+}
+
+static pixel rDiagSum(int dim, int i, int j, pixel *src) {
+  pixel n;
+
+  n.red = src[RIDX(i, j, dim)].red + src[RIDX(i+1, j+1, dim)].red;
+  n.green = src[RIDX(i, j, dim)].green + src[RIDX(i+1, j+1, dim)].green;
+  n.blue = src[RIDX(i, j, dim)].blue + src[RIDX(i+1, j+1, dim)].blue;
+
+  return n;
+}
+
+static pixel horizSum(int dim, int i, int j, pixel *src) {
+
+  pixel n;
+
+  n.red = src[RIDX(i, j, dim)].red + src[RIDX(i, j+1 , dim)].red;
+  n.green = src[RIDX(i, j, dim)].green + src[RIDX(i, j+1 , dim)].green;
+  n.blue = src[RIDX(i, j, dim)].blue + src[RIDX(i, j+1, dim)].blue;
+
+  return n;
 }
 
 /******************************************************
@@ -304,11 +377,136 @@ void naive_smooth(int dim, pixel *src, pixel *dst)
 char smooth_descr[] = "smooth: Current working version";
 void smooth(int dim, pixel *src, pixel *dst)
 {
-    naive_smooth(dim, src, dst);
+    int i, size, iterator1, iterator2, iterator3;
+
+    pixel n;
+
+    pixel tempHorizSum;
+    pixel[] tempVertSums = new pixel[dim];
+    pixel[] temprDiagSums = new pixel[dim-1];
+    pixel[] templDiagSums = new pixel[dim-1];
+
+    size = dim-1
+    iterator1 = 0;
+    iterator2 = 0;
+    iterator3 = 0;
+
+    for(i = 0; i < dim; i++) {
+      for (j = 0; j < dim; j++) {
+        n = zero();
+        if(j == 0) {
+          if (i == 0) {
+            tempHorizSum = horizSum(dim, i, j, src);
+            tempVertSums[iterator1] = vertSum(dim, i, j, src);
+            temprDiagSums[iterator2] = rDiagSum(dim, i, j, src);
+
+            n = sum(n,tempHorizSum);
+            n = sum(n,tempVertSums[iterator1++]);
+            n = sum(n,temprDiagSums[iterator2++]);
+
+            dst[RIDX(i, j, dim)] = divBy(n,3);
+          } else if (i == size) {
+            n = sum(n,tempVertSums[iterator1++]);
+            n = sum(n,templDiagSums[iterator3++]);
+
+            tempHorizSum = horizSum(dim, i, j, src);
+
+            n = sum(n,tempHorizSum);
+
+            dst[RIDX(i, j, dim)] = divBy(n,3);
+          } else {
+            n = sum(n,tempVertSums[iterator1]);
+            n = sum(n,templDiagSums[iterator3++]);
+
+
+            tempHorizSum = horizSum(dim, i, j, src);
+            tempVertSums[iterator1] = vertSum(dim, i, j, src);
+            temprDiagSums[iterator2] = rDiagSum(dim, i, j, src);
+
+            n = sum(n,tempHorizSum);
+            n = sum(n,tempVertSums[iterator1++]);
+            n = sum(n,temprDiagSums[iterator2++]);
+
+            dst[RIDX(i, j, dim)] = divBy(n,5);
+          }
+        } else if (j == size) {
+          if(i == 0) {
+            n = sum(n,tempHorizSum);
+
+            tempVertSums[iterator1] = vertSum(dim, i, j, src);
+            templDiagSums[iterator3] = lDiagSum(dim, i, j, src);
+
+            n = sum(n,tempVertSums[iterator1++]);
+            n = sum(n,templDiagSums[iterator3++]);
+
+            dst[RIDX(i, j, dim)] = divBy(n,3);
+          } else if (i == size) {
+            n = sum(n,tempHorizSum);
+            n = sum(n,tempVertSums[iterator1++]);
+            n = sum(n,temprDiagSums[iterator2++]);
+
+            dst[RIDX(i, j, dim)] = divBy(n,3);
+          } else {
+            n = sum(n,tempHorizSum);
+            n = sum(n,tempVertSums[iterator1]);
+            n = sum(n,temprDiagSums[iterator2++]);
+
+            tempVertSums[iterator1] = vertSum(dim, i, j, src);
+            templDiagSums[iterator3] = lDiagSum(dim, i, j, src);
+
+            n = sum(n,tempVertSums[iterator1++]);
+            n = sum(n,templDiagSums[iterator3++]);
+
+            dst[RIDX(i, j, dim)] = divBy(n,5);
+          }
+        } else if (i == 0) {
+          n = sum(n,tempVertSums[iterator1]);
+          n = sum(n,templDiagSums[iterator3++]);
+
+          tempHorizSum = horizSum(dim, i, j, src);
+          tempVertSums[iterator1] = vertSum(dim, i, j, src);
+          temprDiagSums[iterator2] = rDiagSum(dim, i, j, src);
+
+          n = sum(n,tempHorizSum);
+          n = sum(n,tempVertSums[iterator1++]);
+          n = sum(n,temprDiagSums[iterator2++]);
+
+          dst[RIDX(i, j, dim)] = divBy(n,5);
+        } else if (i == size) {
+          n = sum(n,tempHorizSum);
+          n = sum(n,tempVertSums[iterator1]);
+          n = sum(n,temprDiagSums[iterator2++]);
+
+          tempVertSums[iterator1] = vertSum(dim, i, j, src);
+          templDiagSums[iterator3] = lDiagSum(dim, i, j, src);
+
+          n = sum(n,tempVertSums[iterator1++]);
+          n = sum(n,templDiagSums[iterator3++]);
+
+          dst[RIDX(i, j, dim)] = divBy(n,5);
+        } else
+          n = sum(n,tempHorizSum);
+          n = sum(n,tempVertSums[iterator1]);
+          n = sum(n,temprDiagSums[iterator2]);
+          n = sum(n,templDiagSums[iterator3]);
+
+          tempHorizSum = horizSum(dim, i, j, src);
+          tempVertSums[iterator1] = vertSum(dim, i, j, src);
+          temprDiagSums[iterator2] = rDiagSum(dim, i, j, src);
+          templDiagSums[iterator3] = lDiagSum(dim, i, j, src);
+
+          n = sum(n,tempHorizSum);
+          n = sum(n,tempVertSums[iterator1++]);
+          n = sum(n,temprDiagSums[iterator2++]);
+          n = sum(n,templDiagSums[iterator3++]);
+
+          dst[RIDX(i, j, dim)] = divBy(n,8);
+      }
+    }
     //store averages of left right pixels in temp variable
     //store averages of veritcal pixels in temp array
 
-    //new comment
+    //
 }
 
 
@@ -323,5 +521,12 @@ void smooth(int dim, pixel *src, pixel *dst)
 void register_smooth_functions() {
     add_smooth_function(&smooth, smooth_descr);
     add_smooth_function(&naive_smooth, naive_smooth_descr);
+    add_smooth_function(&divBy, "");
+    add_smooth_function(&zero, "");
+    add_smooth_function(&sum, "");
+    add_smooth_function(&vertSum, "");
+    add_smooth_function(&horizSum, "");
+    add_smooth_function(&lDiagSum, "");
+    add_smooth_function(&rDiagSum, "");
     /* ... Register additional test functions here */
 }
