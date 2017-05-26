@@ -96,6 +96,71 @@ void rotateByRowThree(int dim, pixel *src, pixel *dst)
 }
 
 
+char rotate_by_row_descr_ThreeB[] = "rotateByRow: Using whole row move. ThreeB";
+void rotateByRowThreeB(int dim, pixel *src, pixel *dst)
+{
+  int i, j, dstRow;
+
+  for (i = 0; i < dim ; i+=1){
+
+    dstRow = (dim - i - 1) * (dim);
+    for (j = 0; j < dim; j++){
+      dst[dstRow + j] =  src[(j*dim) + i];
+    }
+  }
+}
+
+
+
+
+
+char rotate_by_row_descr_ThreeUnroll8[] = "rotateByRow: Using whole row move. Three Unrolled 8";
+void rotateByRowThreeUnroll8(int dim, pixel *src, pixel *dst)
+{
+  int i, j, c, dstRow;
+  dstRow = (dim - 1) * (dim);
+  for (i = 0; i < dim ; i+=1){
+
+
+    for (c = 0, j = 0; j < (dim - 15); j+=16){
+      dst[dstRow + j] =  src[c + i];
+      c += dim;
+      dst[dstRow + j + 1] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 2] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 3] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 4] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 5] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 6] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 7] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 8] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 9] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 10] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 11] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 12] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 13] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 14] =  src[c + i];
+      c += dim;
+      dst[dstRow + j+ 15] =  src[c + i];
+      c += dim;
+    }
+    dstRow -= dim;
+  }
+}
+
+
 
 char rotate_by_row_Four_descr[] = "rotateByRow: Using whole row move. Four";
 void rotateByRowFour(int dim, pixel *src, pixel *dst)
@@ -131,9 +196,10 @@ void rotateByRowFour(int dim, pixel *src, pixel *dst)
 
 void register_rotate_functions()
 {
-  add_rotate_function(&rotateByRowThreeB, rotate_by_row_descr_ThreeB);
+
     add_rotate_function(&rotateByRowThree, rotate_by_row_descr_Three);
-  //  add_rotate_function(&rotateByRowFour, rotate_by_row_Four_descr);
+    add_rotate_function(&rotateByRowThreeB, rotate_by_row_descr_ThreeB);
+    add_rotate_function(&rotateByRowThreeUnroll8, rotate_by_row_descr_ThreeUnroll8);    
     add_rotate_function(&rotateByRow, rotate_by_row_descr);
     add_rotate_function(&naive_rotate, naive_rotate_descr);
     add_rotate_function(&rotate, rotate_descr);
