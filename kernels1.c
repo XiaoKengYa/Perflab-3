@@ -318,6 +318,8 @@ void naive_smooth(int dim, pixel *src, pixel *dst)
  * smooth - Your current working version of smooth.
  * IMPORTANT: This is the version you will be graded on
  */
+
+ /*
 char smooth_descr[] = "smooth: Segmented computing using custom averages";
 void smooth(int dim, pixel *src, pixel *dst)
 {
@@ -595,7 +597,7 @@ void smooth(int dim, pixel *src, pixel *dst)
     //store averages of veritcal pixels in temp array
 
     //
-}
+//}
 
 char smooth2_descr[] = "smooth2: segmented and simple";
 void smooth2(int dim, pixel *src, pixel *dst) {
@@ -718,8 +720,9 @@ void smooth3(int dim, pixel *src, pixel *dst) {
  *********************************************************************/
 
 void register_smooth_functions() {
-    add_smooth_function(&smooth, smooth_descr);
+    //add_smooth_function(&smooth, smooth_descr);
     add_smooth_function(&naive_smooth, naive_smooth_descr);
     add_smooth_function(&smooth2, smooth2_descr);
+    add_smooth_function(&smooth3, smooth3_descr);
     /* ... Register additional test functions here */
 }
