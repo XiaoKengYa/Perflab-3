@@ -15,8 +15,8 @@ team_t team = {
     "Caleb Ouellette",     /* First member full name */
     "ouellec@wwu.edu",  /* First member email address */
 
-    "",                   /* Second member full name (leave blank if none) */
-    ""                    /* Second member email addr (leave blank if none) */
+    "Zach Richardson",                   /* Second member full name (leave blank if none) */
+    "richarz@wwu.edu"                    /* Second member email addr (leave blank if none) */
 };
 
 /***************
@@ -597,26 +597,26 @@ void smooth(int dim, pixel *src, pixel *dst)
     //
 }
 
-char smooth2_descr[] = "smooth2: ...";
+char smooth2_descr[] = "smooth2: segmented and simple";
 void smooth2(int dim, pixel *src, pixel *dst) {
     int i, j, tempIndex;
     int tempVar = dim;
     //corners
-    dst[0].red = (src[0].red+src[1].red+src[dim].red+src[dim+1].red)>>2;
-    dst[0].green = (src[0].green+src[1].green+src[dim].green+src[dim+1].green)>>2;
-    dst[0].blue = (src[0].blue+src[1].blue+src[dim].blue+src[dim+1].blue)>>2;
+    dst[0].red = (src[0].red+src[1].red+src[dim].red+src[dim+1].red)/4;
+    dst[0].green = (src[0].green+src[1].green+src[dim].green+src[dim+1].green)/4;
+    dst[0].blue = (src[0].blue+src[1].blue+src[dim].blue+src[dim+1].blue)/4;
 
-    dst[dim-1].red = (src[dim-1].red+src[dim-2].red+src[dim*2-1].red+src[dim*2-2].red)>>2;
-    dst[dim-1].green = (src[dim-1].green+src[dim-2].green+src[dim*2-1].green+src[dim*2-2].green)>>2;
-    dst[dim-1].blue = (src[dim-1].blue+src[dim-2].blue+src[dim*2-1].blue+src[dim*2-2].blue)>>2;
+    dst[dim-1].red = (src[dim-1].red+src[dim-2].red+src[dim*2-1].red+src[dim*2-2].red)/4;
+    dst[dim-1].green = (src[dim-1].green+src[dim-2].green+src[dim*2-1].green+src[dim*2-2].green)/4;
+    dst[dim-1].blue = (src[dim-1].blue+src[dim-2].blue+src[dim*2-1].blue+src[dim*2-2].blue)/4;
 
-    dst[dim*(dim-1)].red = (src[dim*(dim-1)].red+src[dim*(dim-1)+1].red+src[dim*(dim-2)].red+src[dim*(dim-2)+1].red)>>2;
-    dst[dim*(dim-1)].green = (src[dim*(dim-1)].green+src[dim*(dim-1)+1].green+src[dim*(dim-2)].green+src[dim*(dim-2)+1].green)>>2;
-    dst[dim*(dim-1)].blue = (src[dim*(dim-1)].blue+src[dim*(dim-1)+1].blue+src[dim*(dim-2)].blue+src[dim*(dim-2)+1].blue)>>2;
+    dst[dim*(dim-1)].red = (src[dim*(dim-1)].red+src[dim*(dim-1)+1].red+src[dim*(dim-2)].red+src[dim*(dim-2)+1].red)/4;
+    dst[dim*(dim-1)].green = (src[dim*(dim-1)].green+src[dim*(dim-1)+1].green+src[dim*(dim-2)].green+src[dim*(dim-2)+1].green)/4;
+    dst[dim*(dim-1)].blue = (src[dim*(dim-1)].blue+src[dim*(dim-1)+1].blue+src[dim*(dim-2)].blue+src[dim*(dim-2)+1].blue)/4;
 
-    dst[dim*dim-1].red = (src[dim*dim-1].red+src[dim*dim-2].red+src[dim*(dim-1)-1].red+src[dim*(dim-1)-2].red)>>2;
-    dst[dim*dim-1].green = (src[dim*dim-1].green+src[dim*dim-2].green+src[dim*(dim-1)-1].green+src[dim*(dim-1)-2].green)>>2;
-    dst[dim*dim-1].blue = (src[dim*dim-1].blue+src[dim*dim-2].blue+src[dim*(dim-1)-1].blue+src[dim*(dim-1)-2].blue)>>2;
+    dst[dim*dim-1].red = (src[dim*dim-1].red+src[dim*dim-2].red+src[dim*(dim-1)-1].red+src[dim*(dim-1)-2].red)/4;
+    dst[dim*dim-1].green = (src[dim*dim-1].green+src[dim*dim-2].green+src[dim*(dim-1)-1].green+src[dim*(dim-1)-2].green)/4;
+    dst[dim*dim-1].blue = (src[dim*dim-1].blue+src[dim*dim-2].blue+src[dim*(dim-1)-1].blue+src[dim*(dim-1)-2].blue)/4;
 
     for (j = 1; j < dim-1; j++) {
         dst[j].red = (src[j].red+src[j-1].red+src[j+1].red+src[j+dim].red+src[j+1+dim].red+src[j-1+dim].red)/6;
@@ -649,8 +649,8 @@ void smooth2(int dim, pixel *src, pixel *dst) {
     }
 }
 
-char smooth2_descr[] = "smooth2: ...";
-void smooth2(int dim, pixel *src, pixel *dst) {
+char smooth3_descr[] = "smooth3: smooth2 slightly optimized";
+void smooth3(int dim, pixel *src, pixel *dst) {
     unsigned i, j, tempIndex;
     unsigned tempVar = dim;
     unsigned dimxPDimM1P = dim*(dim-1);
