@@ -115,21 +115,110 @@ void rotateByRowThreeB(int dim, pixel *src, pixel *dst)
 char rotate_by_row_descr_Three_Unroll_Outer_Reverse_Access[] = "rotateByRow: Using whole row move. Three Undroll outer Reverse_Access";
 void rotateByRowThreeUnrollOuterReverseAccess(int dim, pixel *src, pixel *dst)
 {
-  int i, j, c, srcRow, srcRow2, srcRow3, srcRow4;
+  int i, j, c, srcRow, srcRow2, srcRow3, srcRow4, srcRow5, srcRow6, srcRow7, srcRow8;
 
-  for (i = 0; i < (dim - 3) ; i+=4){
+  int i1, i2 ,i3, i4, i5, i6, i7;
+
+
+
+  for (i = 0; i < (dim - 7) ; i+=8){
 
     srcRow = (dim * i);
     srcRow2 = srcRow + dim;
     srcRow3 = srcRow2 + dim;
     srcRow4 = srcRow3 + dim;
+    srcRow5 = srcRow4 + dim;
+    srcRow6 = srcRow5 + dim;
+    srcRow7 = srcRow6 + dim;
+    srcRow8 = srcRow7 + dim;
+
+    i1 = i + 1;
+    i2 = i + 2;
+    i3 = i + 3;
+    i4 = i + 4;
+    i5 = i + 5;
+    i6 = i + 6;
+    i7 = i + 7;
+
 
 
     for (c = ((dim - 1) * dim), j = 0; j < dim; j++){
       dst[c + i] =  src[srcRow + j];
-      dst[c + (i + 1)] =  src[srcRow2 + j];
-      dst[c + (i + 2)] =  src[srcRow3 + j];
-      dst[c + (i + 3)] =  src[srcRow4 + j];
+      dst[c + i1] =  src[srcRow2 + j];
+      dst[c + i2] =  src[srcRow3 + j];
+      dst[c + i3] =  src[srcRow4 + j];
+      dst[c + i4] =  src[srcRow5 + j];
+      dst[c + i5] =  src[srcRow6 + j];
+      dst[c + i6] =  src[srcRow7 + j];
+      dst[c + i7] =  src[srcRow8 + j];
+      c -= dim;
+    }
+  }
+}
+
+
+char rotate_by_row_descr_Three_Unroll_Outer_Reverse_AccessB[] = "rotateByRow: Using whole row move. Three Undroll outer Reverse_Access AB Test 16";
+void rotateByRowThreeUnrollOuterReverseAccessB16(int dim, pixel *src, pixel *dst)
+{
+  unsigned int i, j, c, srcRow, srcRow2, srcRow3, srcRow4, srcRow5, srcRow6, srcRow7, srcRow8, srcRow9 ,srcRow10,srcRow11, srcRow12,srcRow13,srcRow14,srcRow15,srcRow16;
+
+  unsigned int i1, i2 ,i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15;
+
+  int imax = (dim - 15);
+
+  for (i = 0; i < imax; i+=16){
+
+    srcRow = (dim * i);
+    srcRow2 = srcRow + dim;
+    srcRow3 = srcRow2 + dim;
+    srcRow4 = srcRow3 + dim;
+    srcRow5 = srcRow4 + dim;
+    srcRow6 = srcRow5 + dim;
+    srcRow7 = srcRow6 + dim;
+    srcRow8 = srcRow7 + dim;
+    srcRow9 = srcRow8 + dim;
+    srcRow10 = srcRow9 + dim;
+    srcRow11 = srcRow10 + dim;
+    srcRow12 = srcRow11 + dim;
+    srcRow13 = srcRow12 + dim;
+    srcRow14 = srcRow13 + dim;
+    srcRow15 = srcRow14 + dim;
+    srcRow16 = srcRow15 + dim;
+
+    i1 = i + 1;
+    i2 = i + 2;
+    i3 = i + 3;
+    i4 = i + 4;
+    i5 = i + 5;
+    i6 = i + 6;
+    i7 = i + 7;
+    i8 = i + 8;
+    i9 = i + 9;
+    i10 = i + 10;
+    i11 = i + 11;
+    i12 = i + 12;
+    i13 = i + 13;
+    i14 = i + 14;
+    i15 = i + 15;
+
+    c = ((dim - 1) * dim);
+    for ( j = 0; j < dim; j++){
+      dst[c + i] =  src[srcRow + j];
+      dst[c + i1] =  src[srcRow2 + j];
+      dst[c + i2] =  src[srcRow3 + j];
+      dst[c + i3] =  src[srcRow4 + j];
+      dst[c + i4] =  src[srcRow5 + j];
+      dst[c + i5] =  src[srcRow6 + j];
+      dst[c + i6] =  src[srcRow7 + j];
+      dst[c + i7] =  src[srcRow8 + j];
+      dst[c + i8] =  src[srcRow9 + j];
+      dst[c + i9] =  src[srcRow10 + j];
+      dst[c + i10] =  src[srcRow11 + j];
+      dst[c + i11] =  src[srcRow12 + j];
+      dst[c + i12] =  src[srcRow13 + j];
+      dst[c + i13] =  src[srcRow14 + j];
+      dst[c + i14] =  src[srcRow15 + j];
+      dst[c + i15] =  src[srcRow16 + j];
       c -= dim;
     }
   }
@@ -137,72 +226,140 @@ void rotateByRowThreeUnrollOuterReverseAccess(int dim, pixel *src, pixel *dst)
 
 
 
-char rotate_by_row_descr_ThreeUnroll8[] = "rotateByRow: Using whole row move. Three Unrolled 8";
-void rotateByRowThreeUnroll8(int dim, pixel *src, pixel *dst)
+char rotate_by_row_descr_Three_Unroll_Outer_Reverse_AccessB32[] = "rotateByRow: Using whole row move. Three Undroll outer Reverse_Access AB Test 32";
+void rotateByRowThreeUnrollOuterReverseAccessB32(int dim, pixel *src, pixel *dst)
 {
-  int i, j, c, dstRow;
-  dstRow = (dim - 1) * (dim);
-  for (i = 0; i < dim ; i+=1){
-    for (c = 0, j = 0; j < (dim - 15); j+=16){
-      dst[dstRow + j] =  src[c + i];
-      c += dim;
-      dst[dstRow + j + 1] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 2] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 3] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 4] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 5] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 6] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 7] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 8] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 9] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 10] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 11] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 12] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 13] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 14] =  src[c + i];
-      c += dim;
-      dst[dstRow + j+ 15] =  src[c + i];
-      c += dim;
+  unsigned int i, j, c, srcRow, srcRow2, srcRow3, srcRow4, srcRow5, srcRow6, srcRow7, srcRow8, srcRow9 ,srcRow10,srcRow11, srcRow12,srcRow13,srcRow14,srcRow15,srcRow16,srcRow17,srcRow18,srcRow19,srcRow20,srcRow21,srcRow22,srcRow23,srcRow24,srcRow25,srcRow26,srcRow27,srcRow28,srcRow29,srcRow30, srcRow31, srcRow32;
+
+  unsigned int i1, i2 ,i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16, i17, i18, i19, i20, i21, i22, i23, i24, i25, i26, i27, i28, i29, i30, i31;
+
+  int imax = (dim - 31);
+
+  for (i = 0; i < imax; i+=32){
+
+    srcRow = (dim * i);
+    srcRow2 = srcRow + dim;
+    srcRow3 = srcRow2 + dim;
+    srcRow4 = srcRow3 + dim;
+    srcRow5 = srcRow4 + dim;
+    srcRow6 = srcRow5 + dim;
+    srcRow7 = srcRow6 + dim;
+    srcRow8 = srcRow7 + dim;
+    srcRow9 = srcRow8 + dim;
+    srcRow10 = srcRow9 + dim;
+    srcRow11 = srcRow10 + dim;
+    srcRow12 = srcRow11 + dim;
+    srcRow13 = srcRow12 + dim;
+    srcRow14 = srcRow13 + dim;
+    srcRow15 = srcRow14 + dim;
+    srcRow16 = srcRow15 + dim;
+
+    srcRow17 = srcRow16 + dim;
+    srcRow18 = srcRow17 + dim;
+    srcRow19 = srcRow18 + dim;
+    srcRow20 = srcRow19 + dim;
+    srcRow21 = srcRow20 + dim;
+    srcRow22 = srcRow21 + dim;
+    srcRow23 = srcRow22 + dim;
+    srcRow24 = srcRow23 + dim;
+    srcRow25 = srcRow24 + dim;
+    srcRow26 = srcRow25 + dim;
+    srcRow27 = srcRow26 + dim;
+    srcRow28 = srcRow27 + dim;
+    srcRow29 = srcRow28 + dim;
+    srcRow30 = srcRow29 + dim;
+    srcRow31 = srcRow30 + dim;
+    srcRow32 = srcRow31 + dim;
+
+
+
+
+
+    i1 = i + 1;
+    i2 = i + 2;
+    i3 = i + 3;
+    i4 = i + 4;
+    i5 = i + 5;
+    i6 = i + 6;
+    i7 = i + 7;
+    i8 = i + 8;
+    i9 = i + 9;
+    i10 = i + 10;
+    i11 = i + 11;
+    i12 = i + 12;
+    i13 = i + 13;
+    i14 = i + 14;
+    i15 = i + 15;
+
+    i16 = i + 16;
+    i17 = i + 17;
+    i18 = i + 18;
+    i19 = i + 19;
+    i20 = i + 20;
+    i21 = i + 21;
+    i22 = i + 22;
+    i23 = i + 23;
+    i24 = i + 24;
+    i25 = i + 25;
+    i26 = i + 26;
+    i27 = i + 27;
+    i28 = i + 28;
+    i29 = i + 29;
+    i30 = i + 30;
+    i31 = i + 31;
+
+
+    c = (dim - 1) * dim;
+    for ( j = 0; j < dim; j++){
+      dst[c + i] =  src[srcRow + j];
+      dst[c + i1] =  src[srcRow2 + j];
+      dst[c + i2] =  src[srcRow3 + j];
+      dst[c + i3] =  src[srcRow4 + j];
+      dst[c + i4] =  src[srcRow5 + j];
+      dst[c + i5] =  src[srcRow6 + j];
+      dst[c + i6] =  src[srcRow7 + j];
+      dst[c + i7] =  src[srcRow8 + j];
+      dst[c + i8] =  src[srcRow9 + j];
+      dst[c + i9] =  src[srcRow10 + j];
+      dst[c + i10] =  src[srcRow11 + j];
+      dst[c + i11] =  src[srcRow12 + j];
+      dst[c + i12] =  src[srcRow13 + j];
+      dst[c + i13] =  src[srcRow14 + j];
+      dst[c + i14] =  src[srcRow15 + j];
+      dst[c + i15] =  src[srcRow16 + j];
+
+        dst[c + i16] =  src[srcRow17 + j];
+        dst[c + i17] =  src[srcRow18 + j];
+        dst[c + i18] =  src[srcRow19 + j];
+        dst[c + i19] =  src[srcRow20 + j];
+        dst[c + i20] =  src[srcRow21 + j];
+        dst[c + i21] =  src[srcRow22 + j];
+        dst[c + i22] =  src[srcRow23 + j];
+        dst[c + i23] =  src[srcRow24 + j];
+        dst[c + i24] =  src[srcRow25 + j];
+        dst[c + i25] =  src[srcRow26 + j];
+        dst[c + i26] =  src[srcRow27 + j];
+        dst[c + i27] =  src[srcRow28 + j];
+        dst[c + i28] =  src[srcRow29 + j];
+        dst[c + i29] =  src[srcRow30 + j];
+        dst[c + i30] =  src[srcRow31 + j];
+        dst[c + i31] =  src[srcRow32 + j];
+      c -= dim;
     }
-    dstRow -= dim;
   }
 }
 
 
 
-char rotate_by_row_Four_descr[] = "rotateByRow: Using whole row move. Four";
-void rotateByRowFour(int dim, pixel *src, pixel *dst)
-{
-  int i, j, c, total;
 
-  total = dim * dim;
-  c = dim;
-  j = 0;
-  for (i = 0; i < total; i++){
 
-    dst[j * dim + c] = src[total - i];
-    if(j == dim){
-      j = 0;
-      c--;
-    }else{
-      j++;
-    }
 
-  }
-}
+
+
+
+
+
+
 
 
 
@@ -218,11 +375,13 @@ void rotateByRowFour(int dim, pixel *src, pixel *dst)
 void register_rotate_functions()
 {
 
-    add_rotate_function(&rotateByRowThree, rotate_by_row_descr_Three);
-    add_rotate_function(&rotateByRowThreeB, rotate_by_row_descr_ThreeB);
-    add_rotate_function(&rotateByRowThreeUnroll8, rotate_by_row_descr_ThreeUnroll8);
+    //add_rotate_function(&rotateByRowThree, rotate_by_row_descr_Three);
+    //add_rotate_function(&rotateByRowThreeB, rotate_by_row_descr_ThreeB);
+    //add_rotate_function(&rotateByRowThreeUnroll8, rotate_by_row_descr_ThreeUnroll8);
     add_rotate_function(&rotateByRowThreeUnrollOuterReverseAccess, rotate_by_row_descr_Three_Unroll_Outer_Reverse_Access);
-    add_rotate_function(&rotateByRow, rotate_by_row_descr);
+    add_rotate_function(&rotateByRowThreeUnrollOuterReverseAccessB, rotate_by_row_descr_Three_Unroll_Outer_Reverse_AccessB);
+    add_rotate_function(&rotateByRowThreeUnrollOuterReverseAccessB32, rotate_by_row_descr_Three_Unroll_Outer_Reverse_AccessB32);
+    //add_rotate_function(&rotateByRow, rotate_by_row_descr);
     add_rotate_function(&naive_rotate, naive_rotate_descr);
     add_rotate_function(&rotate, rotate_descr);
     /* ... Register additional test functions here */
