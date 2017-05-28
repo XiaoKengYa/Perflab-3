@@ -112,6 +112,28 @@ void rotateByRowThreeB(int dim, pixel *src, pixel *dst)
 }
 
 
+char rotate_by_row_descr_Three_Unroll_Outer_Reverse_Access[] = "rotateByRow: Using whole row move. Three Undroll outer Reverse_Access";
+void rotateByRowThreeUnrollOuterReverseAccess(int dim, pixel *src, pixel *dst)
+{
+  int i, j, c, srcRow, srcRow2, srcRow3, srcRow4;
+
+  for (i = 0; i < (dim - 3) ; i+=4){
+
+    srcRow = (dim * i);
+    srcRow2 = srcRow + dim;
+    srcRow3 = srcRow2 + dim;
+    srcRow4 = srcRow3 + dim;
+
+
+    for (c = ((dim - 1) * dim), j = 0; j < dim; j++){
+      dst[c + i] =  src[srcRow + j];
+      dst[c + (i + 1)] =  src[srcRow2 + j];
+      dst[c + (i + 2)] =  src[srcRow3 + j];
+      dst[c + (i + 3)] =  src[srcRow4 + j];
+      c -= dim;
+    }
+  }
+}
 
 
 
@@ -199,6 +221,7 @@ void register_rotate_functions()
     add_rotate_function(&rotateByRowThree, rotate_by_row_descr_Three);
     add_rotate_function(&rotateByRowThreeB, rotate_by_row_descr_ThreeB);
     add_rotate_function(&rotateByRowThreeUnroll8, rotate_by_row_descr_ThreeUnroll8);
+    add_rotate_function(&rotateByRowThreeUnrollOuterReverseAccess, rotate_by_row_descr_Three_Unroll_Outer_Reverse_Access);
     add_rotate_function(&rotateByRow, rotate_by_row_descr);
     add_rotate_function(&naive_rotate, naive_rotate_descr);
     add_rotate_function(&rotate, rotate_descr);
@@ -646,6 +669,7 @@ void register_rotate_functions()
        }
      }
      */
+
 
      //hardcode first corner
      //for loop for top edge
