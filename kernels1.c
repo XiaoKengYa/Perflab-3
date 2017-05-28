@@ -711,6 +711,149 @@ void smooth3(int dim, pixel *src, pixel *dst) {
     }
 }
 
+char smooth4_descr[] = "smooth4: smooth3 slightly optimized";
+void smooth4(int dim, pixel *src, pixel *dst) {
+    unsigned i, j, tempIndex;
+    unsigned tempVar = dim;
+    unsigned dimxPDimM1P = dim*(dim-1);
+    unsigned dimxDimM1 = dim*dim-1;
+    unsigned dimxPDimM2P = dimxPDimM1P-dim;
+    unsigned dimx2 = dim*2;
+    unsigned nextLocRed;
+    unsigned nextLocGreen;
+    unsigned nextLocBlue;
+    unsigned currLocRed;
+    unsigned currLocGreen;
+    unsigned currLocBlue;
+    unsigned lastLocRed;
+    unsigned lastLocGreen;
+    unsigned lastLocBlue;
+
+    //corners
+    dst[0].red = (unsigned)(src[0].red+src[1].red+src[dim].red+src[dim+1].red)>>2;
+    dst[0].green = (unsigned)(src[0].green+src[1].green+src[dim].green+src[dim+1].green)>>2;
+    dst[0].blue = (unsigned)(src[0].blue+src[1].blue+src[dim].blue+src[dim+1].blue)>>2;
+
+    dst[dim-1].red = (unsigned)(src[dim-1].red+src[dim-2].red+src[dimx2-1].red+src[dimx2-2].red)>>2;
+    dst[dim-1].green = (unsigned)(src[dim-1].green+src[dim-2].green+src[dimx2-1].green+src[dimx2-2].green)>>2;
+    dst[dim-1].blue = (unsigned)(src[dim-1].blue+src[dim-2].blue+src[dimx2-1].blue+src[dimx2-2].blue)>>2;
+
+    dst[dimxPDimM1P].red = (unsigned)(src[dimxPDimM1P].red+src[dimxPDimM1P+1].red+src[dimxPDimM2P].red+src[dimxPDimM2P+1].red)>>2;
+    dst[dimxPDimM1P].green = (unsigned)(src[dimxPDimM1P].green+src[dimxPDimM1P+1].green+src[dimxPDimM2P].green+src[dimxPDimM2P+1].green)>>2;
+    dst[dimxPDimM1P].blue = (unsigned)(src[dimxPDimM1P].blue+src[dimxPDimM1P+1].blue+src[dimxPDimM2P].blue+src[dimxPDimM2P+1].blue)>>2;
+
+    dst[dimxDimM1].red = (unsigned)(src[dimxDimM1].red+src[dimxDimM1-1].red+src[dimxPDimM1P-1].red+src[dimxPDimM1P-2].red)>>2;
+    dst[dimxDimM1].green = (unsigned)(src[dimxDimM1].green+src[dimxDimM1-1].green+src[dimxPDimM1P-1].green+src[dimxPDimM1P-2].green)>>2;
+    dst[dimxDimM1].blue = (unsigned)(src[dimxDimM1].blue+src[dimxDimM1-1].blue+src[dimxPDimM1P-1].blue+src[dimxPDimM1P-2].blue)>>2;
+    
+    nextLocRed = src[2].red;
+    nextLocGreen = src[2].green;
+    nextLocBlue = src[2].blue;
+    currLocRed = src[1].red;
+    currLocGreen = src[1].green;
+    currLocBlue = src[1].blue;
+    lastLocRed = src[0].red;
+    lastLocGreen = src[0].green;
+    lastLocBlue = src[0].blue;
+    for (j = 1; j < dim-1; j++) {
+        dst[j].red = (unsigned)(currLocRed+lastLocRed+nextLocRed+src[j+dim].red+src[j+1+dim].red+src[j-1+dim].red)/6;
+        dst[j].green = (unsigned)(currLocGreen+lastLocGreen+nextLocGreen+src[j+dim].green+src[j+1+dim].green+src[j-1+dim].green)/6;
+        dst[j].blue = (unsigned)(currLocBlue+lastLocBlue+nextLocBlue+src[j+dim].blue+src[j+1+dim].blue+src[j-1+dim].blue)/6;
+	lastLocRed = currLocRed;
+	lastLocGreen = currLocGreen;
+	lastLocBlue = currLocBlue;
+	currLocRed = nextLocRed;
+	currLocGreen = nextLocGreen;
+	currLocBlue = nextLocBlue;
+	nextLocRed = src[j+2].red;
+	nextLocGreen = src[j+2].green;
+	nextLocBlue = src[j+2].blue;
+    }
+    
+    nextLocRed = src[dimxPDimM1P+2].red;
+    nextLocGreen = src[dimxPDimM1P+2].green;
+    nextLocBlue = src[dimxPDimM1P+2].blue;
+    currLocRed = src[dimxPDimM1P+1].red;
+    currLocGreen = src[dimxPDimM1P+1].green;
+    currLocBlue = src[dimxPDimM1P+1].blue;
+    lastLocRed = src[dimxPDimM1P].red;
+    lastLocGreen = src[dimxPDimM1P].green;
+    lastLocBlue = src[dimxPDimM1P].blue;
+    for (j = dimxPDimM1P+1; j < dimxDimM1; j++) {
+        dst[j].red = (unsigned)(currLocRed+lastLocRed+nextLocRed+src[j-dim].red+src[j+1-dim].red+src[j-1-dim].red)/6;
+        dst[j].green = (unsigned)(currLocGreen+lastLocGreen+nextLocGreen+src[j-dim].green+src[j+1-dim].green+src[j-1-dim].green)/6;
+        dst[j].blue = (unsigned)(currLocBlue+lastLocBlue+nextLocBlue+src[j-dim].blue+src[j+1-dim].blue+src[j-1-dim].blue)/6;
+	lastLocRed = currLocRed;
+	lastLocGreen = currLocGreen;
+	lastLocBlue = currLocBlue;
+	currLocRed = nextLocRed;
+	currLocGreen = nextLocGreen;
+	currLocBlue = nextLocBlue;
+	nextLocRed = src[j+2].red;
+	nextLocGreen = src[j+2].green;
+	nextLocBlue = src[j+2].blue;
+    }
+
+    nextLocRed = src[dim+dim].red;
+    nextLocGreen = src[dim+dim].green;
+    nextLocBlue = src[dim+dim].blue;
+    currLocRed = src[dim].red;
+    currLocGreen = src[dim].green;
+    currLocBlue = src[dim].blue;
+    lastLocRed = src[0].red;
+    lastLocGreen = src[0].green;
+    lastLocBlue = src[0].blue;
+    for (j = dim; j < dimxPDimM1P; j+=dim) {
+        dst[j].red = (unsigned)(currLocRed+lastLocRed+nextLocRed+src[j+1].red+src[j+1+dim].red+src[j-dim+1].red)/6;
+        dst[j].green = (unsigned)(urrLocGreen+lastLocGreen+nextLocGreen+src[j+1].green+src[j+1+dim].green+src[j-dim+1].green)/6;
+        dst[j].blue = (unsigned)(currLocBlue+lastLocBlue+nextLocBlue+src[j+1].blue+src[j+1+dim].blue+src[j-dim+1].blue)/6;
+	lastLocRed = currLocRed;
+	lastLocGreen = currLocGreen;
+	lastLocBlue = currLocBlue;
+	currLocRed = nextLocRed;
+	currLocGreen = nextLocGreen;
+	currLocBlue = nextLocBlue;
+	nextLocRed = src[j+dimx2].red;
+	nextLocGreen = src[j+dimx2].green;
+	nextLocBlue = src[j+dimx2].blue;
+    }
+
+    nextLocRed = src[dimx2+dim-1].red;
+    nextLocGreen = src[dimx2+dim-1].green;
+    nextLocBlue = src[dimx2+dim-1].blue;
+    currLocRed = src[dimx2-1].red;
+    currLocGreen = src[dimx2-1].green;
+    currLocBlue = src[dimx2-1].blue;
+    lastLocRed = src[dim-1].red;
+    lastLocGreen = src[dim-1].green;
+    lastLocBlue = src[dim-1].blue;
+    for (j = dimx2-1; j < dimxDimM1; j+=dim) {
+        dst[j].red = (unsigned)(src[j].red+src[j-1].red+src[j-dim].red+src[j+dim].red+src[j-dim-1].red+src[j-1+dim].red)/6;
+        dst[j].green = (unsigned)(src[j].green+src[j-1].green+src[j-dim].green+src[j+dim].green+src[j-dim-1].green+src[j-1+dim].green)/6;
+        dst[j].blue = (unsigned)(src[j].blue+src[j-1].blue+src[j-dim].blue+src[j+dim].blue+src[j-dim-1].blue+src[j-1+dim].blue)/6;
+	lastLocRed = currLocRed;
+	lastLocGreen = currLocGreen;
+	lastLocBlue = currLocBlue;
+	currLocRed = nextLocRed;
+	currLocGreen = nextLocGreen;
+	currLocBlue = nextLocBlue;
+	nextLocRed = src[j+dimx2].red;
+	nextLocGreen = src[j+dimx2].green;
+	nextLocBlue = src[j+dimx2].blue;
+    }
+
+    for (i = 1; i < dim-1; i++) {
+        for (j = 1; j < dim-1; j++) {
+            tempIndex = tempVar+j;
+            dst[tempIndex].red = (unsigned)(src[tempIndex].red+src[tempIndex-1].red+src[tempIndex+1].red+src[tempIndex-dim].red+src[tempIndex-dim-1].red+src[tempIndex-dim+1].red+src[tempIndex+dim].red+src[tempIndex+dim+1].red+src[tempIndex+dim-1].red)/9;
+            dst[tempIndex].green = (unsigned)(src[tempIndex].green+src[tempIndex-1].green+src[tempIndex+1].green+src[tempIndex-dim].green+src[tempIndex-dim-1].green+src[tempIndex-dim+1].green+src[tempIndex+dim].green+src[tempIndex+dim+1].green+src[tempIndex+dim-1].green)/9;
+            dst[tempIndex].blue = (unsigned)(src[tempIndex].blue+src[tempIndex-1].blue+src[tempIndex+1].blue+src[tempIndex-dim].blue+src[tempIndex-dim-1].blue+src[tempIndex-dim+1].blue+src[tempIndex+dim].blue+src[tempIndex+dim+1].blue+src[tempIndex+dim-1].blue)/9;
+        }
+        tempVar += dim;
+    }
+}
+
+
 /*********************************************************************
  * register_smooth_functions - Register all of your different versions
  *     of the smooth kernel with the driver by calling the
@@ -724,5 +867,6 @@ void register_smooth_functions() {
     add_smooth_function(&naive_smooth, naive_smooth_descr);
     add_smooth_function(&smooth2, smooth2_descr);
     add_smooth_function(&smooth3, smooth3_descr);
+    add_smooth_function(&smooth4, smooth4_descr);
     /* ... Register additional test functions here */
 }
