@@ -805,7 +805,7 @@ void smooth4(int dim, pixel *src, pixel *dst) {
     lastLocBlue = src[0].blue;
     for (j = dim; j < dimxPDimM1P; j+=dim) {
         dst[j].red = (unsigned)(currLocRed+lastLocRed+nextLocRed+src[j+1].red+src[j+1+dim].red+src[j-dim+1].red)/6;
-        dst[j].green = (unsigned)(urrLocGreen+lastLocGreen+nextLocGreen+src[j+1].green+src[j+1+dim].green+src[j-dim+1].green)/6;
+        dst[j].green = (unsigned)(currLocGreen+lastLocGreen+nextLocGreen+src[j+1].green+src[j+1+dim].green+src[j-dim+1].green)/6;
         dst[j].blue = (unsigned)(currLocBlue+lastLocBlue+nextLocBlue+src[j+1].blue+src[j+1+dim].blue+src[j-dim+1].blue)/6;
 	lastLocRed = currLocRed;
 	lastLocGreen = currLocGreen;
@@ -828,9 +828,9 @@ void smooth4(int dim, pixel *src, pixel *dst) {
     lastLocGreen = src[dim-1].green;
     lastLocBlue = src[dim-1].blue;
     for (j = dimx2-1; j < dimxDimM1; j+=dim) {
-        dst[j].red = (unsigned)(src[j].red+src[j-1].red+src[j-dim].red+src[j+dim].red+src[j-dim-1].red+src[j-1+dim].red)/6;
-        dst[j].green = (unsigned)(src[j].green+src[j-1].green+src[j-dim].green+src[j+dim].green+src[j-dim-1].green+src[j-1+dim].green)/6;
-        dst[j].blue = (unsigned)(src[j].blue+src[j-1].blue+src[j-dim].blue+src[j+dim].blue+src[j-dim-1].blue+src[j-1+dim].blue)/6;
+        dst[j].red = (unsigned)(currLocRed+lastLocRed+nextLocRed+src[j-1].red+src[j-dim-1].red+src[j-1+dim].red)/6;
+        dst[j].green = (unsigned)(currLocGreen+lastLocGreen+nextLocGreen+src[j-1].green+src[j-dim-1].green+src[j-1+dim].green)/6;
+        dst[j].blue = (unsigned)(currLocBlue+lastLocBlue+nextLocBlue+src[j-1].blue+src[j-dim-1].blue+src[j-1+dim].blue)/6;
 	lastLocRed = currLocRed;
 	lastLocGreen = currLocGreen;
 	lastLocBlue = currLocBlue;
@@ -843,11 +843,29 @@ void smooth4(int dim, pixel *src, pixel *dst) {
     }
 
     for (i = 1; i < dim-1; i++) {
+	nextLocRed = src[tempVar+2].red;
+        nextLocGreen = src[tempVar+2].green;
+        nextLocBlue = src[tempVar+2].blue;
+        currLocRed = src[tempVar+1].red;
+        currLocGreen = src[tempVar+1].green;
+        currLocBlue = src[tempVar+1].blue;
+        lastLocRed = src[tempVar].red;
+        lastLocGreen = src[tempVar].green;
+        lastLocBlue = src[tempVar].blue;
         for (j = 1; j < dim-1; j++) {
             tempIndex = tempVar+j;
-            dst[tempIndex].red = (unsigned)(src[tempIndex].red+src[tempIndex-1].red+src[tempIndex+1].red+src[tempIndex-dim].red+src[tempIndex-dim-1].red+src[tempIndex-dim+1].red+src[tempIndex+dim].red+src[tempIndex+dim+1].red+src[tempIndex+dim-1].red)/9;
-            dst[tempIndex].green = (unsigned)(src[tempIndex].green+src[tempIndex-1].green+src[tempIndex+1].green+src[tempIndex-dim].green+src[tempIndex-dim-1].green+src[tempIndex-dim+1].green+src[tempIndex+dim].green+src[tempIndex+dim+1].green+src[tempIndex+dim-1].green)/9;
-            dst[tempIndex].blue = (unsigned)(src[tempIndex].blue+src[tempIndex-1].blue+src[tempIndex+1].blue+src[tempIndex-dim].blue+src[tempIndex-dim-1].blue+src[tempIndex-dim+1].blue+src[tempIndex+dim].blue+src[tempIndex+dim+1].blue+src[tempIndex+dim-1].blue)/9;
+            dst[tempIndex].red = (unsigned)(currLocRed+lastLocRed+nextLocRed+src[tempIndex-dim].red+src[tempIndex-dim-1].red+src[tempIndex-dim+1].red+src[tempIndex+dim].red+src[tempIndex+dim+1].red+src[tempIndex+dim-1].red)/9;
+            dst[tempIndex].green = (unsigned)(currLocGreen+lastLocGreen+nextLocGreen+src[tempIndex-dim].green+src[tempIndex-dim-1].green+src[tempIndex-dim+1].green+src[tempIndex+dim].green+src[tempIndex+dim+1].green+src[tempIndex+dim-1].green)/9;
+            dst[tempIndex].blue = (unsigned)(currLocBlue+lastLocBlue+nextLocBlue+src[tempIndex-dim].blue+src[tempIndex-dim-1].blue+src[tempIndex-dim+1].blue+src[tempIndex+dim].blue+src[tempIndex+dim+1].blue+src[tempIndex+dim-1].blue)/9;
+            lastLocRed = currLocRed;
+	    lastLocGreen = currLocGreen;
+	    lastLocBlue = currLocBlue;
+	    currLocRed = nextLocRed;
+	    currLocGreen = nextLocGreen;
+	    currLocBlue = nextLocBlue;
+	    nextLocRed = src[j+2].red;
+	    nextLocGreen = src[j+2].green;
+	    nextLocBlue = src[j+2].blue;
         }
         tempVar += dim;
     }
